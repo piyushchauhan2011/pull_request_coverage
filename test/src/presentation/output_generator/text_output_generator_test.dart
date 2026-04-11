@@ -1,4 +1,5 @@
 import 'package:pull_request_coverage/src/domain/analyzer/models/analysis_result.dart';
+import 'package:pull_request_coverage/src/domain/analyzer/models/file_report.dart';
 import 'package:pull_request_coverage/src/domain/user_settings/models/user_settings.dart';
 import 'package:pull_request_coverage/src/presentation/output_generator/cli_output_generator.dart';
 import 'package:pull_request_coverage/src/presentation/output_generator/markdown_output_generator.dart';
@@ -97,6 +98,55 @@ void main() {
         },
       );
     });
+  });
+
+  group("When `reportOnly` is true", () {
+    testGenerator(
+      "should suppress file reports",
+      UserSettings(reportOnly: true),
+      (generator, output) {
+        const fileReport = FileReport(
+          filePath: "test/file.dart",
+          chunks: [],
+          newLinesCount: 10,
+          linesThatShouldBeTestedCount: 10,
+          linesMissingTestsCount: 5,
+          untestedAndIgnoredLines: 0,
+        );
+
+        generator.addFileReport(fileReport);
+
+        // Verify no output was produced from addFileReport
+        expect(output.toString(), isEmpty);
+      },
+    );
+
+    testGenerator(
+      "should only output summary table on terminate",
+      UserSettings(reportOnly: true),
+      (generator, output) {
+        const fileReport = FileReport(
+          filePath: "test/file.dart",
+          chunks: [],
+          newLinesCount: 10,
+          linesThatShouldBeTestedCount: 10,
+          linesMissingTestsCount: 5,
+          untestedAndIgnoredLines: 0,
+        );
+
+        const result = AnalysisResult(
+          linesThatShouldBeTested: 10,
+          linesMissingTests: 5,
+          untestedIgnoredLines: 0,
+        );
+
+        generator.addFileReport(fileReport);
+        generator.terminate(result);
+
+        // Verify only the result table was output
+        expect(output.toString(), equals(FakeGetResultTable.table));
+      },
+    );
   });
 }
 

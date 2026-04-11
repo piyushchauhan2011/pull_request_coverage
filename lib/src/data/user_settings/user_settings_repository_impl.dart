@@ -103,6 +103,7 @@ class UserSettingsRepositoryImpl implements UserSettingsRepository {
           showUncoveredCode: arg.getBooleanOrDefault(UserSettingsRegister.showUncoveredCode),
           useColorfulOutput: arg.getBooleanOrDefault(UserSettingsRegister.useColorfulOutput),
           reportFullyCoveredFiles: arg.getBooleanOrDefault(UserSettingsRegister.reportFullyCoveredFiles),
+          reportOnly: arg.getBooleanOrDefault(UserSettingsRegister.reportOnly),
           outputMode: arg.getString(UserSettingsRegister.outputMode) == "markdown" ? OutputMode.markdown : OutputMode.cli,
           fractionalDigits: arg.getInt(UserSettingsRegister.fractionDigits) ?? 2,
           markdownMode:
